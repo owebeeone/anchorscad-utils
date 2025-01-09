@@ -155,7 +155,7 @@ pip install anchorscad-utils
 ## Usage
 
 ```python
-from anchorscad_utils.colours import Colour
+from anchorscad_lib.utils.colours import Colour
 
 red = Colour('red')
 print(red.to_hex())
