@@ -1,11 +1,10 @@
 import unittest
 from anchorscad_lib.utils.process_manager import ProcessManager, ProcessManagerEntry
 from dataclasses import dataclass
-import time
 import sys
 
 @dataclass
-class TestProcessEntry(ProcessManagerEntry):
+class TstProcessEntry(ProcessManagerEntry):
     """Test process entry that records start/end events"""
     started_called: bool = False
     ended_called: bool = False
@@ -26,7 +25,7 @@ class ProcessManagerTest(unittest.TestCase):
         pm = ProcessManager(max_jobs=2)
         
         # Create test process that just sleeps briefly
-        entry = TestProcessEntry()
+        entry = TstProcessEntry()
         pm.run_proc(entry, [sys.executable, '-c', 'import time; time.sleep(0.1)'])
         
         # Verify process started
@@ -48,7 +47,7 @@ class ProcessManagerTest(unittest.TestCase):
         
         # Start 3 processes (more than max_jobs)
         for _ in range(3):
-            entry = TestProcessEntry()
+            entry = TstProcessEntry()
             entries.append(entry)
             pm.run_proc(entry, [sys.executable, '-c', 'import time; time.sleep(0.1)'])
             
@@ -70,7 +69,7 @@ class ProcessManagerTest(unittest.TestCase):
 
     def test_failed_process(self):
         pm = ProcessManager()
-        entry = TestProcessEntry()
+        entry = TstProcessEntry()
         
         # Run process that exits with error
         pm.run_proc(entry, [sys.executable, '-c', 'exit(1)'])
@@ -88,7 +87,7 @@ class ProcessManagerTest(unittest.TestCase):
         
         # Start processes
         for _ in range(3):
-            entry = TestProcessEntry()
+            entry = TstProcessEntry()
             entries.append(entry)
             pm.run_proc(entry, [sys.executable, '-c', 'import time; time.sleep(0.1)'])
         
