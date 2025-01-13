@@ -6,8 +6,9 @@ Created on 28 Jan 2022
 
 from dataclasses import dataclass, field
 import os
-from subprocess import Popen
+from subprocess import Popen, TimeoutExpired
 import time
+import select
 
 def _get_max_jobs():
     '''Determines the default number of outstanding processes to run.'''
@@ -26,6 +27,8 @@ class ProcessManagerEntry:
     status.'''
     
     popen_obj: Popen=None
+    stdout_chunks: list[bytes]=field(default_factory=list, init=False)
+    stderr_chunks: list[bytes]=field(default_factory=list, init=False)
 
     def started(self):
         '''Called just before process is created.'''
@@ -37,7 +40,35 @@ class ProcessManagerEntry:
     
     def ended(self, status):
         pass
+    
+    def _ended(self, status):
+        self.collect_io()
+        self.ended(status)
 
+    def collect_io(self):
+        '''Collects the stdout and stderr from the process.'''
+        if self.popen_obj is None:
+            return
+
+        try:
+            self.popen_obj.communicate(timeout=0.01)
+        except TimeoutExpired:
+            return
+    
+    def raise_unknow_fd(self, fd):
+        """Handles an unknown fd from select.poll()."""
+        raise ValueError(f"Unknown fd: {fd}")
+    
+    def raise_unknow_event(self, event):
+        """Handles an unknown event from select.poll()."""
+        raise ValueError(f"Unknown event: {event}")
+    
+    def communicate(self):
+        '''Communicates with the process.'''
+        if self.popen_obj is None:
+            return (None, None)
+        self.collect_io()
+        return self.popen_obj.communicate()
 
 @dataclass
 class ProcessManager:
@@ -58,12 +89,13 @@ class ProcessManager:
     def count_procs(self) -> int:
         next_current_entries = []
         for p in self.current_entries:
+            p.collect_io()
             status = p.popen_obj.poll()
             if status is None:
                 next_current_entries.append(p)
             else:
                 self.finished_entries.append(p)
-                p.ended(p.popen_obj.wait())
+                p._ended(p.popen_obj.wait())
                 
         self.current_entries = next_current_entries
         return len(self.current_entries)
