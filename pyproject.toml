@@ -1,12 +1,14 @@
 [build-system]
-requires = ["hatchling"]
+requires = [
+    "hatchling",
+]
 build-backend = "hatchling.build"
 
 [project]
 name = "anchorscad-utils"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
-  { name="Gianni Mariani", email="gianni@mariani.ws" },
+    { name = "Gianni Mariani", email = "gianni@mariani.ws" },
 ]
 description = "Utility libraries for AnchorSCAD. Includes Colour, OpenSCAD finder, Process manager and more."
 readme = "README.md"
@@ -17,18 +19,21 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-  "numpy",
-  "anchorscad-test-tools",
+    "numpy",
+    "anchorscad-test-tools",
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/owebeeone/anchorscad-utils"
+Homepage = "https://github.com/owebeeone/anchorscad-utils"
 "Bug Tracker" = "https://github.com/owebeeone/anchorscad-utils/issues"
 
 [tool.hatch.envs.test]
 dependencies = [
-  "pytest>=7.0.0",
-  "pytest-cov>=4.0.0",
-] 
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+
 [tool.hatch.build.targets.wheel]
-packages = ["src/anchorscad_lib"]
+packages = [
+    "src/anchorscad_lib",
+]
