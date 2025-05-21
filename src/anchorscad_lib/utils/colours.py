@@ -11,8 +11,9 @@ class Colour:
     value: tuple[float, float, float, float] = (0., 0., 0., 1.)
 
     # Colour map derived from:
-    # https://github.com/openscad/openscad/blob/master/src/core/ColorNode.cc#L46
-    COLOUR_MAP = {
+    # https://github.com/openscad/openscad/blob/master/src/core/ColorNode.cc#L51
+    COLOUR_MAP = {    
+        'aliceblue': (240/255, 248/255, 255/255),
         'antiquewhite': (250/255, 235/255, 215/255),
         'aqua': (0/255, 255/255, 255/255),
         'aquamarine': (127/255, 255/255, 212/255),
